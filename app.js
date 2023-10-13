@@ -1,7 +1,7 @@
 const express = require("express");
 const morgan = require("morgan");
-const {Product} = require("./models/product");
-const mongoose=require('mongoose')
+const { Product } = require("./models/product");
+const mongoose = require("mongoose");
 
 const app = express();
 require("dotenv/config");
@@ -13,48 +13,32 @@ const api = process.env.API_URL;
 
 //GET api product uchun
 app.get(`${api}/products`, async (req, res) => {
-  const products=await Product.find()
-  
-  if(!products){
-    res.send('Topilmadi')
-  }else{
-    res.json(products)
-  }
-
+  const products = await Product.find();
+  res.json(products);
 });
 
-//Get by id
-app.get(`${api}/products/:id`, async (req, res) => {
-  const product=await Product.findById(req.params.id)
-  
-  if(!product){
-    res.send('Topilmadiku')
-  }else{
-    res.json(product)
-  }
+app.post(`${api}/product`, (req, res) => {
+  let name = req.body.name;
+  let count = req.body.count;
+  let price = req.body.price;
+  let description = req.body.description;
 
-});
-
-//POST api product uchun
-app.post(`${api}/products`,async (req, res) => {
-
-  const newProduct =await new Product({
-    name: req.body.name,
-    count: req.body.count,
-    price: req.body.name,
-    description: req.body.description,
+  const newProduct = new Product({
+    name: name,
+    count: count,
+    price: price,
+    description: description,
   });
 
-  newProduct.save()
-    .then((createdProduct) => {
-      res.send(createdProduct);
+  newProduct
+    .save()
+    .then((product) => {
+      res.json(product);
     })
-    .catch((err) => {
-      console.log(err);
+    .catch((error) => {
+      res.send(error);
     });
 });
-
-
 
 mongoose
   .connect(`mongodb+srv://admin:727367235@cluster0.bdvplbq.mongodb.net/`, {

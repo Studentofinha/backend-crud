@@ -1,0 +1,1 @@
+# This project is for teaching students for API of the e-commerce projects
