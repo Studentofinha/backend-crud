@@ -12,10 +12,29 @@ app.use(morgan("tiny")); //
 const api = process.env.API_URL;
 
 //GET api product uchun
+
 app.get(`${api}/products`, async (req, res) => {
-  const products = await Product.find();
-  res.json(products);
+  const product = await Product.find();
+  if(!product){
+    res.send('Product topilmadi')
+  }else{
+    res.send(product);
+  }
 });
+
+// ID boyicha get qilish
+
+app.get(`${api}/product/:id`, async (req, res) => {
+  const product = await Product.findById(req.params.id);
+  
+  if(!product){
+    res.send('Product topilmadi')
+  }else{
+    res.send(product);
+  }
+});
+
+
 
 app.post(`${api}/product`, (req, res) => {
   let name = req.body.name;
@@ -30,10 +49,9 @@ app.post(`${api}/product`, (req, res) => {
     description: description,
   });
 
-  newProduct
-    .save()
+  newProduct.save()
     .then((product) => {
-      res.json(product);
+      res.send(product);
     })
     .catch((error) => {
       res.send(error);
@@ -41,7 +59,7 @@ app.post(`${api}/product`, (req, res) => {
 });
 
 mongoose
-  .connect(`mongodb+srv://admin:727367235@cluster0.bdvplbq.mongodb.net/`, {
+  .connect(`${process.env.CONNECTION_STRING}`, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     dbName: "products",
